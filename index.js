@@ -7,13 +7,17 @@ let score = 0
 //Position where the frame will be drawn
 let x=20;
 let y=60; 
+let zomX = 260;
+let zomY = 60
 
-let spriteWidth = 77; 
+let spriteWidth = 68; 
 let spriteHeight = 30; 
 
 //Coordinate of Sprite sheet from where we want to extract the image
 let srcX; 
 let srcY;
+let srcZomX;
+let srcZomY;
 
 let row = 1; 
 let frameCount = 3; 
@@ -23,6 +27,8 @@ let frameCount = 3;
 let width = spriteWidth / frameCount; 
 let height = spriteHeight / row; 
 curFrame = 0;
+
+let curZomFrame = 0;
 
 //For Clouds
 
@@ -45,13 +51,16 @@ let girlImg = document.createElement('img')
 girlImg.src = './images/rab.png'
 
 let zombieImage = document.createElement('img')
-zombieImage.src = './images/mRed.png'
+zombieImage.src = './images/zombie.png'
 
 let cloudImg = document.createElement('img')
 cloudImg.src = './images/clouds2.png'
 
 let cloudImg1 = document.createElement('img')
 cloudImg1.src = './images/clouds3.png'
+
+let gear = document.createElement('img')
+gear.src = './images/gear.png'
 
 // Variables For Rabbits
 
@@ -61,18 +70,62 @@ let girlArray = [{x: canvas.width+75, y: 60}]
 
 // Functions for the character / player  
 
+let gearX = 40;
+let gearY = 75;
+// let gearArray = [{x:40 , y:65 }]
+let gearIncrement = 20;
+let showBullet = false;
+  
+function drawGear() {
+    if (showBullet) {
+        ctx.drawImage(gear, gearX, gearY);
+        gearX += gearIncrement 
+    }
+   
+}
+
+function shootGear() {
+    canvas.addEventListener('click', event => {
+        showBullet = true       
+    });
+}
+
+
 function updateFrame(){
-        curFrame++
-        curFrame = curFrame % frameCount; 
-        srcX = curFrame * width; 
-        srcY = 0;
-        ctx.clearRect(x,y,width,height);
-    
+    curFrame++
+    curFrame = curFrame % frameCount; 
+    srcX = curFrame * width; 
+    srcY = 0;
+    ctx.clearRect(x,y,width,height);
+}
+
+function updateZombFrame() {
+    curZomFrame++
+    curZomFrame = curZomFrame % frameCount;
+    srcZomX = curZomFrame * width;
+    srcZomY = 0;
+    ctx.clearRect(zomX, zomY, width, height)
 }
     
 function drawPlayer(){
     updateFrame();
-    ctx.drawImage(charecter,srcX,srcY,width,height,x,y,width,height);
+    drawGear()
+    ctx.drawImage(charecter,srcX,srcY,width,height,x , y ,width,height);
+}
+
+function drawZombie() {
+    for(let i = 0; i < zombieArray.length; i++) {
+        updateZombFrame()
+        ctx.drawImage(zombieImage, srcZomX, srcZomY, width, height, zombieArray[i].x, zombieArray[i].y, width, height)
+        console.log(intervalID);
+        zombieArray[i].x -= zombieDecrement
+        if (zombieArray[i].x == canvas.width) {        
+            zombieArray.push({
+                x: canvas.width + 600,
+                y: 60
+            })
+        }
+    }
 }
 
 // Functions for Clouds
@@ -102,13 +155,9 @@ function newCloud1() {
         // make the cloud move towards the left on the x axis
         clouds1[j].x -= 10
         // check if a cloud has reached a certain position
-        // console.log(clouds1[j].x);
         if (clouds1[j].x == 60) {
 
-            let randomCloud = Math.floor(Math.random() *5 )
-
-            // console.log(randomCloud);
-            //add a new cloud          
+            let randomCloud = Math.floor(Math.random() *5 )         
 
             if(randomCloud < 3) {
                 //add a new cloud
@@ -117,7 +166,6 @@ function newCloud1() {
                 y: 15
             })
             } else {
-                //console.log("No cloud");
                 clouds1.push({
                     x: canvas.width+40,
                     y: 10
@@ -127,15 +175,6 @@ function newCloud1() {
     }
 }
 
-// Functions for Zombies and new Charecter
-
-function newRabbit() {
-   
-}
-
-function newRedRabbit() {
-    
-}
 
 function main(){
     ctx.drawImage(backImg, 0, 0, canvas.width, canvas.height)
@@ -143,12 +182,12 @@ function main(){
     drawPlayer();
     newCloud()
     newCloud1()
-    newRabbit()
-    newRedRabbit()
+    drawZombie()
+    shootGear()
 } 
 
 //Interval for game progress
 
 // intervalID = setInterval(() => {
 //    requestAnimationFrame(main)
-// }, 100)
+// }, 500)
