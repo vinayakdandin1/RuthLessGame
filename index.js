@@ -7,8 +7,8 @@ let score = 0
 //Position where the frame will be drawn
 let x=20;
 let y=60; 
-let zomX = 260;
-let zomY = 60
+let zomX;
+let zomY;
 
 let spriteWidth = 68; 
 let spriteHeight = 30; 
@@ -64,13 +64,13 @@ gear.src = './images/gear.png'
 
 // Variables For Rabbits
 
-let zombieArray = [{x:canvas.width+5, y:60}];
+let zombieArray = [{x:canvas.width+215, y:60}];
 let zombieDecrement = 10;
 let girlArray = [{x: canvas.width+75, y: 60}]
 
 // Functions for the character / player  
 
-let gearX = 40;
+let gearX = 35;
 let gearY = 75;
 // let gearArray = [{x:40 , y:65 }]
 let gearIncrement = 20;
@@ -80,8 +80,17 @@ function drawGear() {
     if (showBullet) {
         ctx.drawImage(gear, gearX, gearY);
         gearX += gearIncrement 
+        console.log(gearX);
+        
+        if(gearX == 315) {
+            clearGear()
+        }
     }
-   
+}
+
+function clearGear() {
+    showBullet = false
+    gearX = 35
 }
 
 function shootGear() {
@@ -113,17 +122,31 @@ function drawPlayer(){
     ctx.drawImage(charecter,srcX,srcY,width,height,x , y ,width,height);
 }
 
+function clearZombie(ind) {
+    zombieArray.splice(ind - 2, 1)
+    // zombieArray.push({
+    //     x: canvas.width + 5,
+    //     y: 60
+    // })
+}
+
 function drawZombie() {
     for(let i = 0; i < zombieArray.length; i++) {
         updateZombFrame()
         ctx.drawImage(zombieImage, srcZomX, srcZomY, width, height, zombieArray[i].x, zombieArray[i].y, width, height)
-        console.log(intervalID);
-        zombieArray[i].x -= zombieDecrement
-        if (zombieArray[i].x == canvas.width) {        
+        zombieArray[i].x -= zombieDecrement;
+        //console.log(zombieArray[i].x);
+        if (zombieArray[i].x == 335) {        
             zombieArray.push({
-                x: canvas.width + 600,
+                x: canvas.width + 285,
                 y: 60
             })
+        }
+        console.log(zombieArray[i].x, gearX);
+        if (zombieArray[i].x <= gearX) {
+            clearGear();
+            
+            clearZombie(i)
         }
     }
 }
@@ -190,4 +213,4 @@ function main(){
 
 // intervalID = setInterval(() => {
 //    requestAnimationFrame(main)
-// }, 500)
+// }, 100)
