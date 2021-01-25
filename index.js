@@ -22,6 +22,12 @@ let srcZomY;
 let row = 1; 
 let frameCount = 3; 
 
+let startBtn = document.querySelector('#start')
+let overScreen = document.querySelector('#gameOver')
+
+let scoreDisplay = document.querySelector('.finalScore')
+let restartButton = document.querySelector('#gameOver button')
+
 //Width of individual frame
 
 let width = spriteWidth / frameCount; 
@@ -47,8 +53,8 @@ backImg.src = './images/blue.png'
 let foreImg = document.createElement('img')
 foreImg.src = './images/fg.PNG'
 
-let girlImg = document.createElement('img')
-girlImg.src = './images/rab.png'
+// let girlImg = document.createElement('img')
+// girlImg.src = './images/rab.png'
 
 let zombieImage = document.createElement('img')
 zombieImage.src = './images/zombie.png'
@@ -70,7 +76,7 @@ let girlArray = [{x: canvas.width+75, y: 60}]
 
 // Functions for the character / player  
 
-let gearX = 35;
+let gearX = 25;
 let gearY = 75;
 // let gearArray = [{x:40 , y:65 }]
 let gearIncrement = 20;
@@ -80,7 +86,6 @@ function drawGear() {
     if (showBullet) {
         ctx.drawImage(gear, gearX, gearY);
         gearX += gearIncrement 
-        console.log(gearX);
         
         if(gearX == 315) {
             clearGear()
@@ -90,7 +95,7 @@ function drawGear() {
 
 function clearGear() {
     showBullet = false
-    gearX = 35
+    gearX = 25
 }
 
 function shootGear() {
@@ -124,10 +129,7 @@ function drawPlayer(){
 
 function clearZombie(ind) {
     zombieArray.splice(ind - 2, 1)
-    // zombieArray.push({
-    //     x: canvas.width + 5,
-    //     y: 60
-    // })
+    score++;
 }
 
 function drawZombie() {
@@ -135,18 +137,20 @@ function drawZombie() {
         updateZombFrame()
         ctx.drawImage(zombieImage, srcZomX, srcZomY, width, height, zombieArray[i].x, zombieArray[i].y, width, height)
         zombieArray[i].x -= zombieDecrement;
-        //console.log(zombieArray[i].x);
         if (zombieArray[i].x == 335) {        
             zombieArray.push({
                 x: canvas.width + 285,
                 y: 60
             })
         }
-        console.log(zombieArray[i].x, gearX);
+
         if (zombieArray[i].x <= gearX) {
-            clearGear();
-            
-            clearZombie(i)
+                clearGear();
+                clearZombie(i)
+        } 
+        if (zombieArray[i].x <= 30) {
+                clearInterval(intervalID)
+                gameOver()   
         }
     }
 }
@@ -198,8 +202,13 @@ function newCloud1() {
     }
 }
 
+function gameOver() {
+    canvas.style.display = 'none'
+    scoreDisplay.innerHTML = `Your score is ${score - 1}`
+    overScreen.style.display = 'block'
+}
 
-function main(){
+function main(){ 
     ctx.drawImage(backImg, 0, 0, canvas.width, canvas.height)
     ctx.drawImage(foreImg, 0, 90, canvas.width, canvas.height/3)
     drawPlayer();
@@ -207,10 +216,31 @@ function main(){
     newCloud1()
     drawZombie()
     shootGear()
+    ctx.font = '12px Verdana'
+    ctx.fillText('Score: ' + score, 10, canvas.height - 10)
 } 
 
 //Interval for game progress
 
-// intervalID = setInterval(() => {
-//    requestAnimationFrame(main)
-// }, 100)
+function startGame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    canvas.style.display = 'block'
+    startBtn.style.display = 'none'
+    overScreen.style.display = 'none'
+    intervalID = setInterval(() => {
+        requestAnimationFrame(main)
+    }, 100)
+}
+
+window.addEventListener('load', () => {
+    canvas.style.display = 'none'
+    overScreen.style.display = 'none'
+    // start click event listener
+    startBtn.addEventListener('click', () => {
+        startGame()
+    })
+    restartButton.addEventListener('click', () => {
+        score = -1;
+        startGame()
+    })
+})

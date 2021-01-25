@@ -4,12 +4,73 @@
 }
 
 body {
+    font: Verdana;
     display: flex;
     justify-content: center;
+    align-items: center;
+    text-align: center;
 }
 
 canvas {
     margin-top: 7rem;   
     width: 800px;
     height: 600px;
+}
+
+#start {
+    margin-top: 80px;
+    width: 800px;
+    height: 600px;
+    background-image: url("./images/Star.PNG");
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
+    align-items: center;
+}
+
+button {
+    background-color: #689df2; /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 24px;
+    border-radius: 40px;
+}
+
+.inside-left {
+    margin-top: 50px;
+}
+
+.inside-right {
+    margin-bottom: 50px;
+    background-color: seashell;
+    padding: 10px;
+}
+
+.inside-right p {
+    font-size: 18px;
+}
+
+#gameOver {
+    margin-top: 80px;
+    width: 800px;
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(#ccd1cb, #40e612);
+    align-items: center;
+    color: #853a01;
+    font-size: 2rem;
+}
+
+#gameOver h3 {
+    font-size: 2.5rem;
+    margin-top: 180px;
+}
+
+#gameOver button {
+    background-color: #853a01;
 }
