@@ -3,9 +3,10 @@ let ctx = canvas.getContext('2d')
 canvas.style.border = '2px solid black'
 let intervalID = 0
 let score = 0
+let uniqueID = 0;
 
 //Position where the frame will be drawn
-let x=20;
+let x=0;
 let y=60; 
 let zomX;
 let zomY;
@@ -50,11 +51,11 @@ charecter.src = './images/char.png'
 let backImg = document.createElement('img')
 backImg.src = './images/blue.png'
 
+let desertImg = document.createElement('img')
+desertImg.src = './images/desert.png'
+
 let foreImg = document.createElement('img')
 foreImg.src = './images/fg.PNG'
-
-// let girlImg = document.createElement('img')
-// girlImg.src = './images/rab.png'
 
 let zombieImage = document.createElement('img')
 zombieImage.src = './images/zombie.png'
@@ -70,24 +71,61 @@ gear.src = './images/gear.png'
 
 // Variables For Rabbits
 
-let zombieArray = [{x:canvas.width+215, y:60}];
+let zombieArray = [{x:canvas.width+230, y:60}];
 let zombieDecrement = 10;
 let girlArray = [{x: canvas.width+75, y: 60}]
 
 // Functions for the character / player  
 
-let gearX = 25;
-let gearY = 75;
+let gearX = x;
+let gearY = y + 10;
 // let gearArray = [{x:40 , y:65 }]
 let gearIncrement = 20;
 let showBullet = false;
+
+// Event Listeners
+
+let jumpIncrement = 35
+//let spaceBarDown = false
+document.addEventListener('keydown', (event) => { 
+
+    if (event.keyCode == 32 || event.key == " ") {
+        if(y === 60) {
+            // console.log("inside if if");
+            //spaceBarDown = true
+            y -= jumpIncrement   
+            if(y < 50) {
+                gearY -= jumpIncrement
+            }
+              
+        }
+    } 
+})
+
+document.addEventListener('keyup', (event) => {
+    if (event.keyCode == 32 || event.key == " ") { 
+        
+        if(y == 25) {
+            //spaceBarDown = false  
+            y += jumpIncrement
+            if(y == 60) {
+                setTimeout(() => {
+                    gearY += jumpIncrement
+                }, 1000);                         
+            }
+            
+        }
+            
+    }
+})
+
   
 function drawGear() {
     if (showBullet) {
         ctx.drawImage(gear, gearX, gearY);
         gearX += gearIncrement 
         
-        if(gearX == 315) {
+        if(gearX == 320) {
             clearGear()
         }
     }
@@ -95,7 +133,7 @@ function drawGear() {
 
 function clearGear() {
     showBullet = false
-    gearX = 25
+    gearX = 0
 }
 
 function shootGear() {
@@ -103,7 +141,6 @@ function shootGear() {
         showBullet = true       
     });
 }
-
 
 function updateFrame(){
     curFrame++
@@ -137,20 +174,27 @@ function drawZombie() {
         updateZombFrame()
         ctx.drawImage(zombieImage, srcZomX, srcZomY, width, height, zombieArray[i].x, zombieArray[i].y, width, height)
         zombieArray[i].x -= zombieDecrement;
-        if (zombieArray[i].x == 335) {        
+        if (zombieArray[i].x == 350) {  
             zombieArray.push({
-                x: canvas.width + 285,
+                x: canvas.width + 300,
                 y: 60
             })
         }
-
+        
         if (zombieArray[i].x <= gearX) {
+            
+            if(zombieArray[i].y < gearY && gearY < (zombieArray[i].y + zombieImage.height)) {
                 clearGear();
                 clearZombie(i)
+            }      
         } 
-        if (zombieArray[i].x <= 30) {
+        
+        if (zombieArray[i].x == 20) {
+            //console.log(zombieArray[i].y, (y+height));
+            if(zombieArray[i].y <= (y+height)) {
                 clearInterval(intervalID)
-                gameOver()   
+                gameOver()
+            }       
         }
     }
 }
@@ -206,9 +250,12 @@ function gameOver() {
     canvas.style.display = 'none'
     scoreDisplay.innerHTML = `Your score is ${score - 1}`
     overScreen.style.display = 'block'
+    zombieArray = [{x:canvas.width+230, y:60}];
 }
 
 function main(){ 
+    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    
     ctx.drawImage(backImg, 0, 0, canvas.width, canvas.height)
     ctx.drawImage(foreImg, 0, 90, canvas.width, canvas.height/3)
     drawPlayer();
@@ -223,13 +270,15 @@ function main(){
 //Interval for game progress
 
 function startGame() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height)
+    
     canvas.style.display = 'block'
     startBtn.style.display = 'none'
     overScreen.style.display = 'none'
     intervalID = setInterval(() => {
-        requestAnimationFrame(main)
+        requestAnimationFrame(main)      
+        intervalID++
     }, 100)
+    
 }
 
 window.addEventListener('load', () => {
@@ -240,7 +289,7 @@ window.addEventListener('load', () => {
         startGame()
     })
     restartButton.addEventListener('click', () => {
-        score = -1;
+        score = 0;
         startGame()
     })
 })

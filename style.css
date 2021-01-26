@@ -13,13 +13,13 @@ body {
 
 canvas {
     margin-top: 7rem;   
-    width: 800px;
+    width: 900px;
     height: 600px;
 }
 
 #start {
     margin-top: 80px;
-    width: 800px;
+    width: 900px;
     height: 600px;
     background-image: url("./images/Star.PNG");
     display: flex;
@@ -56,7 +56,7 @@ button {
 
 #gameOver {
     margin-top: 80px;
-    width: 800px;
+    width: 900px;
     height: 600px;
     display: flex;
     justify-content: center;
