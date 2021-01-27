@@ -113,7 +113,7 @@ document.addEventListener('keydown', (event) => {
             
             setTimeout(() => {
                 canJump = true
-            }, 1000);
+            }, 3000);
         }
     } 
 })
