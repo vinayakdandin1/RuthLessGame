@@ -106,16 +106,14 @@ document.addEventListener('keydown', (event) => {
             canJump = false
             y -= jumpIncrement   
             gearX = 0
-            console.log(y);
         
             setTimeout(() => {
                  y += jumpIncrement
-                 console.log(" + jump");
-            }, 1000);
+            }, 400);
             
             setTimeout(() => {
                 canJump = true
-            }, 2000);
+            }, 1000);
         }
     } 
 })
@@ -137,18 +135,53 @@ document.addEventListener('keydown', (event) => {
 //     }
 // })
 
-let fruitsArray = [{x: cherryX, y: 40}]
+let fruitsArray = [{img: cherryImg,x: cherryX, y: 40}]
+let fruitsID = 0;
 
-function drawFruits() {
-    let fruitsDecider = Math.floor(Math.random *7)
-    if(fruitsDecider < 4) {
-        ctx.drawImage(cherryImg, canvas.width - 20, 40)
-    } else {
-        ctx.drawImage(lollyPopImg, canvas.width - 40, 40)
-    }
+function updateFruit() {
+    fruitsID = setInterval(() => {
+        let fruitsDecider = Math.floor(Math.random() *7)
+        console.log(fruitsDecider);
+        if(fruitsDecider < 4) {
+            fruitsArray.push({
+                img: cherryImg,
+                x: cherryX,
+                y: 40
+            })
+        } else {
+            fruitsArray.push({
+                img: lollyPopImg,
+                x: cherryX,
+                y: 40
+            })
+        }
+    }, 6000);
+}
+
+function clearFruit(index) {
+    fruitsArray.splice(index, 1)
+    score++; 
+}
+
+function drawFruits() {   
+    for(let i=0; i<fruitsArray.length; i++) {
+        
+        ctx.drawImage(fruitsArray[i].img, 0, 0,cherryImg.width, cherryImg.height, fruitsArray[i].x, fruitsArray[i].y, 10, 10)
+        fruitsArray[i].x -= 15
+
+        if(fruitsArray[i].x <= x+charecter.width ) {
+            if(y < (fruitsArray[i].y + 5 ) && (fruitsArray[i].y + 5) < (y + charecter.height) ) {
+                console.log(i);
+                console.log(fruitsArray);
+                clearFruit(i);
+            }
+        }
+
+    }   
 }
   
 function drawGear() {
+    
     if (showBullet) {
         if(y === 60) {
             ctx.drawImage(gear, gearX, gearY);
@@ -207,7 +240,7 @@ function updateZombieArr() {
             x: canvas.width + 300,
             y: 60
         })
-        console.log(zombieArray);
+        
     }, 4000);
 }
 
@@ -231,11 +264,12 @@ function drawZombie() {
             }      
         } 
         
-        if (zombieArray[i].x == 20) {
+        if (zombieArray[i].x == 10) {
             //console.log(zombieArray[i].y, (y+height));
             if(zombieArray[i].y <= (y+height)) {
                 clearInterval(intervalID)
                 clearInterval(zombieID)
+                clearInterval(fruitsID)
                 gameOver()
             }       
         }
@@ -306,7 +340,8 @@ function main(){
     newCloud1()
     drawZombie()
     shootGear()
-    
+    drawFruits()
+
     ctx.font = '12px Verdana'
     ctx.fillText('Score: ' + score, 10, canvas.height - 10)
 } 
@@ -323,6 +358,7 @@ function startGame() {
         uniqueID++    
     }, 100)
     updateZombieArr()
+    updateFruit()
     
 }
 
