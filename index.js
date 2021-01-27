@@ -169,7 +169,7 @@ function drawFruits() {
         ctx.drawImage(fruitsArray[i].img, 0, 0,cherryImg.width, cherryImg.height, fruitsArray[i].x, fruitsArray[i].y, 10, 10)
         fruitsArray[i].x -= 15
 
-        if(fruitsArray[i].x <= x+charecter.width ) {
+        if(fruitsArray[i].x <= (x+(charecter.width / 3)) ) {
             if(y < (fruitsArray[i].y + 5 ) && (fruitsArray[i].y + 5) < (y + charecter.height) ) {
                 console.log(i);
                 console.log(fruitsArray);
