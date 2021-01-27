@@ -66,6 +66,12 @@ cloudImg.src = './images/clouds2.png'
 let cloudImg1 = document.createElement('img')
 cloudImg1.src = './images/clouds3.png'
 
+let cherryImg = document.createElement('img')
+cherryImg.src = './images/cherry.png'
+
+let lollyPopImg = document.createElement('img')
+lollyPopImg.src = './images/lollipopRed.png'
+
 let gear = document.createElement('img')
 gear.src = './images/gear.png'
 
@@ -79,6 +85,10 @@ let girlArray = [{x: canvas.width+75, y: 60}]
 
 let gearX = x;
 let gearY = y + 10;
+
+let cherryX = canvas.width +10
+let cherryDecrement = 15
+
 // let gearArray = [{x:40 , y:65 }]
 let gearIncrement = 20;
 let showBullet = false;
@@ -86,46 +96,68 @@ let showBullet = false;
 // Event Listeners
 
 let jumpIncrement = 35
-//let spaceBarDown = false
-document.addEventListener('keydown', (event) => { 
+let canJump = true
 
+document.addEventListener('keydown', (event) => { 
+    
     if (event.keyCode == 32 || event.key == " ") {
-        if(y === 60) {
-            // console.log("inside if if");
-            //spaceBarDown = true
+        
+        if(y === 60 && canJump === true) {
+            canJump = false
             y -= jumpIncrement   
-            if(y < 50) {
-                gearY -= jumpIncrement
-            }
-              
+            gearX = 0
+            console.log(y);
+        
+            setTimeout(() => {
+                 y += jumpIncrement
+                 console.log(" + jump");
+            }, 1000);
+            
+            setTimeout(() => {
+                canJump = true
+            }, 2000);
         }
     } 
 })
 
-document.addEventListener('keyup', (event) => {
-    if (event.keyCode == 32 || event.key == " ") { 
+// document.addEventListener('keyup', (event) => {
+//     if (event.keyCode == 32 || event.key == " ") { 
         
-        if(y == 25) {
-            //spaceBarDown = false  
-            y += jumpIncrement
-            if(y == 60) {
-                setTimeout(() => {
-                    gearY += jumpIncrement
-                }, 1000);                         
-            }
+//         if(y == 25) {
             
-        }
+//             y += jumpIncrement
+//             // if(y == 60) {
+//             //     setTimeout(() => {
+//             //         gearY += jumpIncrement
+//             //     }, 1000);                         
+//             // }
             
-    }
-})
+//         }
+            
+//     }
+// })
 
+let fruitsArray = [{x: cherryX, y: 40}]
+
+function drawFruits() {
+    let fruitsDecider = Math.floor(Math.random *7)
+    if(fruitsDecider < 4) {
+        ctx.drawImage(cherryImg, canvas.width - 20, 40)
+    } else {
+        ctx.drawImage(lollyPopImg, canvas.width - 40, 40)
+    }
+}
   
 function drawGear() {
     if (showBullet) {
-        ctx.drawImage(gear, gearX, gearY);
-        gearX += gearIncrement 
+        if(y === 60) {
+            ctx.drawImage(gear, gearX, gearY);
+            gearX += gearIncrement 
         
-        if(gearX == 320) {
+            if(gearX == 320) {
+                clearGear()
+            }
+        } else {
             clearGear()
         }
     }
@@ -165,8 +197,18 @@ function drawPlayer(){
 }
 
 function clearZombie(ind) {
-    zombieArray.splice(ind - 2, 1)
-    score++;
+        zombieArray.splice(ind - 2, 1)
+        score++;    
+}
+
+function updateZombieArr() {
+    zombieID = setInterval(() => {
+        zombieArray.push({
+            x: canvas.width + 300,
+            y: 60
+        })
+        console.log(zombieArray);
+    }, 4000);
 }
 
 function drawZombie() {
@@ -174,12 +216,12 @@ function drawZombie() {
         updateZombFrame()
         ctx.drawImage(zombieImage, srcZomX, srcZomY, width, height, zombieArray[i].x, zombieArray[i].y, width, height)
         zombieArray[i].x -= zombieDecrement;
-        if (zombieArray[i].x == 350) {  
-            zombieArray.push({
-                x: canvas.width + 300,
-                y: 60
-            })
-        }
+        // if (zombieArray[i].x == 350) {  
+        //     zombieArray.push({
+        //         x: canvas.width + 300,
+        //         y: 60
+        //     })
+        // }
         
         if (zombieArray[i].x <= gearX) {
             
@@ -193,6 +235,7 @@ function drawZombie() {
             //console.log(zombieArray[i].y, (y+height));
             if(zombieArray[i].y <= (y+height)) {
                 clearInterval(intervalID)
+                clearInterval(zombieID)
                 gameOver()
             }       
         }
@@ -248,7 +291,7 @@ function newCloud1() {
 
 function gameOver() {
     canvas.style.display = 'none'
-    scoreDisplay.innerHTML = `Your score is ${score - 1}`
+    scoreDisplay.innerHTML = `Your score is ${score}`
     overScreen.style.display = 'block'
     zombieArray = [{x:canvas.width+230, y:60}];
 }
@@ -263,6 +306,7 @@ function main(){
     newCloud1()
     drawZombie()
     shootGear()
+    
     ctx.font = '12px Verdana'
     ctx.fillText('Score: ' + score, 10, canvas.height - 10)
 } 
@@ -276,8 +320,9 @@ function startGame() {
     overScreen.style.display = 'none'
     intervalID = setInterval(() => {
         requestAnimationFrame(main)      
-        intervalID++
+        uniqueID++    
     }, 100)
+    updateZombieArr()
     
 }
 
