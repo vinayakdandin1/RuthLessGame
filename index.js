@@ -3,10 +3,10 @@ let ctx = canvas.getContext('2d')
 canvas.style.border = '2px solid black'
 let intervalID = 0
 let score = 0
-let uniqueID = 0;
+
 
 //Position where the frame will be drawn
-let x=0;
+let x = 30;
 let y=60; 
 let zomX;
 let zomY;
@@ -75,6 +75,9 @@ lollyPopImg.src = './images/lollipopRed.png'
 let gear = document.createElement('img')
 gear.src = './images/gear.png'
 
+let emptySpace = document.createElement('img')
+emptySpace.src = './images/whiteSpace.png'
+
 // Variables For Rabbits
 
 let zombieArray = [{x:canvas.width+230, y:60}];
@@ -98,6 +101,12 @@ let showBullet = false;
 let jumpIncrement = 35
 let canJump = true
 
+let fruitsArray = [{img: cherryImg,x: cherryX, y: 40}]
+let fruitsID = 0;
+
+let emptyX = canvas.width;
+let emptyY = 88
+
 document.addEventListener('keydown', (event) => { 
     
     if (event.keyCode == 32 || event.key == " ") {
@@ -105,11 +114,11 @@ document.addEventListener('keydown', (event) => {
         if(y === 60 && canJump === true) {
             canJump = false
             y -= jumpIncrement   
-            gearX = 0
+            gearX = x
         
             setTimeout(() => {
                  y += jumpIncrement
-            }, 400);
+            }, 800);
             
             setTimeout(() => {
                 canJump = true
@@ -135,13 +144,32 @@ document.addEventListener('keydown', (event) => {
 //     }
 // })
 
-let fruitsArray = [{img: cherryImg,x: cherryX, y: 40}]
-let fruitsID = 0;
+
+
+function whiteSpace() {
+    ctx.drawImage(emptySpace, 0, 0,emptySpace.width, emptySpace.height, emptyX, emptyY, 30, 32)
+    emptyX -= 20
+
+    if(emptyX === -1000) {
+        emptyX = canvas.width
+    } 
+
+    if(emptyX <= (x + (charecter.width / 3)) && x < emptyX) {
+        if(emptyY <= (y + charecter.height)) {
+            clearInterval(intervalID)
+            clearInterval(zombieID)
+            clearInterval(fruitsID)
+            zombieArray = []
+            fruitsArray = []
+            gameOver()
+        }
+    }
+}
 
 function updateFruit() {
     fruitsID = setInterval(() => {
         let fruitsDecider = Math.floor(Math.random() *7)
-        console.log(fruitsDecider);
+        //console.log(fruitsDecider);
         if(fruitsDecider < 4) {
             fruitsArray.push({
                 img: cherryImg,
@@ -171,8 +199,8 @@ function drawFruits() {
 
         if(fruitsArray[i].x <= (x+(charecter.width / 3)) ) {
             if(y < (fruitsArray[i].y + 5 ) && (fruitsArray[i].y + 5) < (y + charecter.height) ) {
-                console.log(i);
-                console.log(fruitsArray);
+                //console.log(i);
+                //console.log(fruitsArray);
                 clearFruit(i);
             }
         }
@@ -230,7 +258,8 @@ function drawPlayer(){
 }
 
 function clearZombie(ind) {
-        zombieArray.splice(ind - 2, 1)
+        console.log(ind);
+        zombieArray.splice(0, 1)
         score++;    
 }
 
@@ -270,6 +299,8 @@ function drawZombie() {
                 clearInterval(intervalID)
                 clearInterval(zombieID)
                 clearInterval(fruitsID)
+                zombieArray = []
+                fruitsArray = []
                 gameOver()
             }       
         }
@@ -341,7 +372,7 @@ function main(){
     drawZombie()
     shootGear()
     drawFruits()
-
+    whiteSpace()
     ctx.font = '12px Verdana'
     ctx.fillText('Score: ' + score, 10, canvas.height - 10)
 } 
@@ -353,12 +384,13 @@ function startGame() {
     canvas.style.display = 'block'
     startBtn.style.display = 'none'
     overScreen.style.display = 'none'
-    intervalID = setInterval(() => {
-        requestAnimationFrame(main)      
-        uniqueID++    
-    }, 100)
     updateZombieArr()
     updateFruit()
+    
+    intervalID = setInterval(() => {
+        requestAnimationFrame(main)       
+    }, 100)
+    
     
 }
 
