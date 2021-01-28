@@ -43,6 +43,15 @@ let clouds = [{x:canvas.width +5 , y: 8}]
 let clouds1 = [{x:canvas.width + 10, y: 10}]
 let cloudDecrement = 5;
 
+let zombieArray = [{x:canvas.width+230, y:60}];
+let zombieDecrement = 5;
+
+let gearX = x;
+let gearY = y + 10;
+
+
+let gearIncrement = 20;
+let showBullet = false;
 // Creating Images
 
 let charecter = document.createElement('img')
@@ -81,23 +90,8 @@ gear.src = './images/gear.png'
 let emptySpace = document.createElement('img')
 emptySpace.src = './images/whiteSpace.png'
 
-// Variables For Rabbits
-
-let zombieArray = [{x:canvas.width+230, y:60}];
-let zombieDecrement = 5;
-
-// Functions for the character / player  
-
-let gearX = x;
-let gearY = y + 10;
-
 let cherryX = canvas.width +10
 let cherryDecrement = 5
-
-let gearIncrement = 20;
-let showBullet = false;
-
-// Event Listeners
 
 let jumpIncrement = 35
 let canJump = true
@@ -396,9 +390,9 @@ function startGame() {
             jumpFreezTime -= 500
         }
     
-        if(level === 3) {
-            boss()
-        }
+        // if(level === 3) {
+        //     boss()
+        // }
         
     }, 10000);
     
