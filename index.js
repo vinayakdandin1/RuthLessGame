@@ -24,10 +24,12 @@ let frameCount = 3;
 
 let startBtn = document.querySelector('#start')
 let overScreen = document.querySelector('#gameOver')
+let winScreen = document.querySelector('#win')
 //let bossLevel = document.querySelector('#boss')
 
 let scoreDisplay = document.querySelector('.finalScore')
 let restartButton = document.querySelector('#gameOver button')
+let playAgainButton = document.querySelector('#win button')
 
 //Width of individual frame
 
@@ -36,6 +38,11 @@ let height = spriteHeight / row;
 curFrame = 0;
 
 let curZomFrame = 0;
+
+//Boss level player co-ordinates
+
+let bPlayerX = 30
+let bPlayerY = 60 
 
 //For Clouds
 
@@ -59,13 +66,19 @@ let charecter = document.createElement('img')
 charecter.src = './images/char.png'  
 
 let stationaryChar = document.createElement('img')
-stationaryChar.src = './images/player_stand.png' 
+stationaryChar.src = './images/player_stand.png'   
+
+let BossScreen = document.createElement('img')
+BossScreen.src = './images/BossScreen.png'  
+
+let bossZombieImage = document.createElement('img')
+bossZombieImage.src = './images/bossZombie.png' 
+
+// let cannonImage = document.createElement('img')
+// cannonImage.src = './images/tower.png'
 
 let backImg = document.createElement('img')
 backImg.src = './images/blue.png'
-
-let desertImg = document.createElement('img')
-desertImg.src = './images/desert.png'
 
 let foreImg = document.createElement('img')
 foreImg.src = './images/fg.PNG'
@@ -88,10 +101,13 @@ lollyPopImg.src = './images/lollipopRed.png'
 let gear = document.createElement('img')
 gear.src = './images/gear.png'
 
+let redGear = document.createElement('img')
+redGear.src = './images/CannonImage.png'
+
 let emptySpace = document.createElement('img')
 emptySpace.src = './images/whiteSpace.png'
 
-let cherryX = canvas.width +10
+let cherryX = canvas.width +80
 let cherryDecrement = 5
 
 let jumpIncrement = 35
@@ -110,25 +126,97 @@ let airTime = 800
 let jumpFreezTime = 3000
 
 let levelId = 1 
+let PlayerForBoss = false;
 
-// function boss() {
-//     clearInterval(zombieID)
-//     clearInterval(fruitsID)
-//     clearInterval(levelId)
+let bossZombie = false
+// let isCannon = false
+let bossHealth = "❤❤❤"
+let bossDummy = 3
 
-//     level = "Boss";
-//     zombieArray =[]
-//     fruitsArray = []
-//     clouds = []
-//     clouds1 = []
-//     emptyX = canvas.width + 5
-//     x = -40
-//     emptyDecrement = 0
-//     ctx.drawImage(stationaryChar, 0, 0,stationaryChar.width, stationaryChar.height, 30, 60, 22.2, 30)
+let isLeftArrow = false;
+let isRightArrow = false
 
-// }
+let bossFireInterval = 0
+// let gearCannonX = 37.5
+// let gearCannonY = 18
 
-//Function for pits
+let gearZombieX = canvas.width -50
+let gearZombieY = 70
+
+let showBossBullet = false
+
+// Boss level functions
+
+function bossAppearance() {
+    ctx.drawImage(BossScreen, 0, 0, BossScreen.width, BossScreen.height, canvas.width, canvas.height, canvas.width, canvas.height)
+}
+
+function boss() {
+    clearInterval(zombieID)
+    clearInterval(fruitsID)
+    clearInterval(levelId)
+    
+
+    level = "Boss";
+    zombieArray =[]
+    fruitsArray = []
+    clouds = []
+    clouds1 = []
+    emptyX = canvas.width + 5
+    x = -40
+    emptyDecrement = 0
+    PlayerForBoss = true
+    bossZombie = true
+    //isCannon = true
+
+}
+
+function updateBossHealth() {
+    if(showBullet && gearX >= (canvas.width - 50)) {
+
+        if(bossDummy === 3) {
+            bossHealth = "❤❤"
+            bossDummy-- 
+        } else if(bossDummy === 2) {
+            bossHealth = "❤"
+                bossDummy--
+        } else {
+            youWin()
+        }
+
+    }
+}
+
+function drawBossZombie() {
+    bossFire()
+    ctx.drawImage(bossZombieImage, 0, 0,bossZombieImage.width, bossZombieImage.height, canvas.width - 50, 10, 40, 80)
+}
+
+function drawStationaryChar() {
+    ctx.drawImage(stationaryChar, 0, 0,stationaryChar.width, stationaryChar.height, bPlayerX, bPlayerY, 22, 30)
+}
+
+
+function bossFire() {
+
+    if(PlayerForBoss && showBossBullet) {
+        ctx.drawImage(redGear,0, 0, redGear.width, redGear.height, gearZombieX, gearZombieY,20, 20);
+        gearZombieX -= 8
+    }
+    if(gearZombieX <= 50 && gearZombieX > 30) {
+        if(zombieHitMe === true) {
+            gameOver()
+        }
+    }
+    if(gearZombieX <= 0) {
+        clearZombieGear()
+    }
+}
+
+function clearZombieGear() {
+    showBossBullet = false
+    gearZombieX = canvas.width -50
+}
 
 function whiteSpace() {
     ctx.drawImage(emptySpace, 0, 0,emptySpace.width, emptySpace.height, emptyX, emptyY, 30, 32)
@@ -180,17 +268,16 @@ function drawFruits() {
         ctx.drawImage(fruitsArray[i].img, 0, 0,cherryImg.width, cherryImg.height, fruitsArray[i].x, fruitsArray[i].y, 10, 10)
         fruitsArray[i].x -= fruitsDecrement
 
-        if(fruitsArray[i].x <= (x+(charecter.width / 3)) ) {
+        if(fruitsArray[i].x <= (x+(charecter.width / 3)) && fruitsArray[i].x > x ) {
             if(y < (fruitsArray[i].y + 5 ) && (fruitsArray[i].y + 5) < (y + charecter.height) ) {
                 clearFruit(i);
             }
         }
-
     }   
 }
 
 // Functions for bullet
-
+  
 function drawGear() {
     
     if (showBullet) {
@@ -198,23 +285,36 @@ function drawGear() {
             ctx.drawImage(gear, gearX, gearY);
             gearX += gearIncrement 
         
-            if(gearX == 320) {
+            if(gearX >= canvas.width) {
                 clearGear()
             }
         } else {
             clearGear()
         }
+    } 
+
+    if(bossZombie) {
+        if(gearX == 254) {
+            updateBossHealth()
+        }
     }
+    
 }
 
 function clearGear() {
     showBullet = false
-    gearX = x
+
+    if(!PlayerForBoss) {
+        gearX = x
+    } else {
+        gearX = x + 70
+    }
+    
 }
 
 function shootGear() {
     canvas.addEventListener('click', event => {
-        showBullet = true       
+        showBullet = true     
     });
 }
 
@@ -273,10 +373,6 @@ function drawZombie() {
         
         if (zombieArray[i].x <= (x + (charecter.width / 3)) && x < zombieArray[i].x) {
             if(zombieArray[i].y <= (y+height)) {
-                // clearInterval(intervalID)
-                // clearInterval(zombieID)
-                // clearInterval(fruitsID)
-                // clearInterval(levelId)
                 zombieArray = []
                 fruitsArray = []
                 gameOver()
@@ -285,7 +381,7 @@ function drawZombie() {
     }
 }
 
-// Functions for Clouds
+// Functions for random Clouds
 
 function newCloud() {
     for(let i=0; i< clouds.length; i++) {
@@ -332,7 +428,7 @@ function newCloud1() {
     }
 }
 
-// All other functions for game functionality
+//Game over function to clear all intervals and to show game over screen
 
 function gameOver() {
 
@@ -340,11 +436,37 @@ function gameOver() {
     clearInterval(zombieID)
     clearInterval(fruitsID)
     clearInterval(levelId)
+    clearInterval(bossFireInterval)
+    gearZombieX = canvas.width -30;
     canvas.style.display = 'none'
+    winScreen.style.display = 'none'
     scoreDisplay.innerHTML = `Your score is ${score}`
     overScreen.style.display = 'block'
     zombieArray = [{x:canvas.width+230, y:60}];
 }
+
+//Win fuction to show win screen
+
+function youWin() {
+    clearInterval(intervalID)
+    clearInterval(zombieID)
+    clearInterval(fruitsID)
+    clearInterval(levelId)
+    clearInterval(bossFireInterval)
+    bossDummy = 3
+    bossHealth = "❤❤❤"
+    canvas.style.display = 'none'
+    winScreen.style.display = 'block'
+    scoreDisplay.innerHTML = `Your score is ${score}`
+    overScreen.style.display = 'none'
+}
+
+// Interval for the zombie to shoot
+    
+bossFireInterval = setInterval(() => {
+        showBossBullet = true
+        //bossFire()  
+}, 800);
 
 function main(){ 
     ctx.clearRect(0, 0, canvas.width, canvas.height)
@@ -358,17 +480,46 @@ function main(){
     shootGear()
     drawFruits()
     whiteSpace()
+    bossAppearance()
+
+    if (isRightArrow && (bPlayerX  < canvas.width - 60)) {
+        bPlayerX += 5
+    }
+    else if (isLeftArrow && bPlayerX  > 0) {
+        bPlayerX -= 5
+    }
+
+    if(PlayerForBoss) {
+        drawStationaryChar()
+    }
+
+    if(bossZombie) {
+        drawBossZombie()
+    }
+
+    // if(isCannon) {
+    //     drawCannon()
+    // }
+
     ctx.font = '12px Verdana'
     ctx.fillText('Score: ' + score, 10, canvas.height - 10)
     ctx.font = '12px Verdana'
     ctx.fillText('Level: ' + level, canvas.width - 80, canvas.height - 10)
+
+    if(bossZombie) {
+        ctx.font = '12px Verdana'
+        ctx.fillText('BossHealth: ' + bossHealth, canvas.width - 210, canvas.height - 10)
+    }
 } 
+
+//Function to start the game and start the interval
 
 function startGame() {
     
     canvas.style.display = 'block'
     startBtn.style.display = 'none'
     overScreen.style.display = 'none'
+    winScreen.style.display = 'none'
     updateZombieArr()
     updateFruit()
     
@@ -399,19 +550,23 @@ function startGame() {
             jumpFreezTime -= 500
         }
     
-        // if(level === 3) {
-        //     boss()
-        // }
+        if(level === 5) {
+            clearInterval(levelId)
+            boss()    
+        }
         
     }, 10000);
     
 }
+
 
 // Event listeners to start game, shoot bullet and jump functionality
 
 window.addEventListener('load', () => {
     canvas.style.display = 'none'
     overScreen.style.display = 'none'
+    winScreen.style.display = 'none'
+    
     // start click event listener
     startBtn.addEventListener('click', () => {
         startGame()
@@ -428,8 +583,44 @@ restartButton.addEventListener('click', () => {
     fruitsDecrement = 15
     zombieDecrement = 5
     level = 1
+
+    zombieArray =[{x:canvas.width+230, y:60}]
+    fruitsArray = [{img: cherryImg,x: cherryX, y: 40}]
+    clouds = [{x:canvas.width +5 , y: 8}]
+    clouds1 = [{x:canvas.width + 10, y: 10}]
+    emptyX = canvas.width + 5
+    x = 30
+    PlayerForBoss = false
+    bossZombie = false
+    //isCannon = false
     startGame()
 })
+
+playAgainButton.addEventListener('click', () => {
+    score = 0;
+    emptyX = canvas.width
+
+    emptyDecrement = 10
+    gearIncrement = 20
+    fruitsDecrement = 15
+    zombieDecrement = 5
+    level = 1
+
+    zombieArray =[{x:canvas.width+230, y:60}]
+    fruitsArray = [{img: cherryImg,x: cherryX, y: 40}]
+    clouds = [{x:canvas.width +5 , y: 8}]
+    clouds1 = [{x:canvas.width + 10, y: 10}]
+    emptyX = canvas.width + 5
+    x = 30
+    PlayerForBoss = false
+    bossZombie = false
+    //isCannon = false
+    startGame()
+})
+
+//Event listener for jump function and move function for boss level
+let bPlayerJump = true
+let zombieHitMe = true
 
 document.addEventListener('keydown', (event) => { 
     
@@ -448,5 +639,39 @@ document.addEventListener('keydown', (event) => {
                 canJump = true
             }, jumpFreezTime);
         }
+
+        if(bPlayerY === 60 && bPlayerJump === true) {
+            bPlayerJump = false
+            zombieHitMe = false
+            bPlayerY -= jumpIncrement
+            gearX = 30
+
+            setTimeout(() => {
+                bPlayerY = 60
+                zombieHitMe = true
+            }, 1000);
+
+            setTimeout(() => {
+                bPlayerJump = true
+            }, 100);
+        }
+
+
     } 
+})
+
+document.addEventListener('keydown', (event) => {
+    if (event.keyCode == 68 || event.key == "d") {
+       isRightArrow = true;
+       isLeftArrow = false;
+    }
+    else if (event.keyCode == 65 || event.key == "a") {
+       isRightArrow = false;
+       isLeftArrow = true;
+    }
+})
+
+document.addEventListener('keyup', (event) => {
+    isRightArrow = false;
+    isLeftArrow = false;
 })

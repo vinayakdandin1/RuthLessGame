@@ -74,3 +74,19 @@ button {
 #gameOver button {
     background-color: #853a01;
 }
+
+#win {
+    margin-top: 80px;
+    width: 900px;
+    height: 600px;
+    display: flex;
+    justify-content: center;
+    background: linear-gradient(#6b7380, #6789c2);
+    align-items: center;
+    color: #853a01;
+    font-size: 2rem;
+}
+
+#win h2 {
+    margin-top: 180px;
+}
