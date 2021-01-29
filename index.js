@@ -145,6 +145,9 @@ let gearZombieY = 70
 
 let showBossBullet = false
 
+let bPlayerJump = true
+let zombieHitMe = true
+
 // Boss level functions
 
 function bossAppearance() {
@@ -168,7 +171,6 @@ function boss() {
     PlayerForBoss = true
     bossZombie = true
     //isCannon = true
-
 }
 
 function updateBossHealth() {
@@ -465,7 +467,7 @@ function youWin() {
     
 bossFireInterval = setInterval(() => {
         showBossBullet = true
-        //bossFire()  
+        bossFire()  
 }, 800);
 
 function main(){ 
@@ -619,8 +621,7 @@ playAgainButton.addEventListener('click', () => {
 })
 
 //Event listener for jump function and move function for boss level
-let bPlayerJump = true
-let zombieHitMe = true
+
 
 document.addEventListener('keydown', (event) => { 
     
