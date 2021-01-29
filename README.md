@@ -2,41 +2,38 @@ RUTHLESS Game
 
 Description ---------------------------------------------------------<
 
-This is a simple Game with background images of one of my favourite games from my childhood called Contra. In this game you will encounter two types of rabbits, one which is white which carries a gift for you, when you touch this rabbit, your score increases by five points. 
-Another bunny is a red one which carries a virus with it, be RUTHLESS and kill the sick rabbit or jump and avoid hitting it to keep playing.
-Your game will be over if you kill more than three white rabbits. Also your game will be over if you touch the red rabbit. 
+This is a simple Game with background images of one of my favourite games from my childhood called Contra. In this game your player will be running continuously forward and on the way he will face zombies which will be moving towards him to kill him. Your objective is to kill the zombies by using mouse click, which shoots the bullets on zombies. 
+There will also be some pits/gaps in the platform which you will have to cross by jumping using the spacebar on keyboard. 
+You can also collect goodies by jumping which keep appearing randomly, but be cautious when you want to jump as the jump functionality will be disabled for some time once you jump.  
+
+As the level increases the zombies and the pits/gaps speed increases. 
 
 MVP (DOM - CANVAS) --------------------------------------------------<
 
-game has a player and two types of rabbits which appear randomly
-Player need to touch the white rabbit to score additional points
-Player can shoot and kill red rabbit or jump and cross it to avoid getting hit.
+game has a player and the zombies which appear randomly
+Player need to kill the zombies by using mouse click to shoot at zombies. 
 
 Backlog -------------------------------------------------------------<
 
-Add levels Easy - Medium - Hard
-Add a red Boss bunny which can shoot back at the player
-Add broken pieces of land at some instances for the player to jump and cross
-Move player to avoid random virus atacks
+Show a boss zombie after certain interval and figth with him
+Add music to the game
 
 Data Structure ------------------------------------------------------<
 
-main.js
+index.js
 buildStartScreen() {}
 buildGameScreen() {}
 buildGameOverScreen() {}
 
-game.js
-Game () {}
-starLoop () {}  -- for random rabbit
-checkCollisions () {}
-clearCanvas () {}
-updateCanvas () {}
-drawCanvas () {}
-GameOver () {}
-playershoot () {}
-clearRabbit() {}
-increment score() {}
+startGame()  -- Event listener to start game
+main()  -- starts when game is started and executes all functions with setInterval
+gameOver()  -- clears all the intervals and shows gave over screen
+newCloud(), newCloud1() -- animates random clouds moving in sky
+drawZombie(), updateZombieArr(), clearZombie(), updateZombFrame() -- Contains all logic to generat random zombie and animate
+drawPlayer(), updateFrame() -- contains all logic for player animation
+shootGear(), clearGear(), drawGear() -- Contains all logic for shooting a bullet
+drawFruits(), clearFruit(), updateFruit() -- Contains logic for displaying random fruit on screen.  
+whiteSpace() -- Generates a pit/gap in platform and animates it to move towards player.
 
 splashScreen
 gameScreen
@@ -51,15 +48,15 @@ main - buildGameScreen
 main - buildGameOverScreen
 game - startLoop
 game - buildCanvas
-game - add rabbits
+game - add random zombies
 game - immitate screen moving
-game - immitate rabbits approaching player
+game - immitate zombies approaching player
 game - build player shooting
-game - remove rabbit if hit
-game - check player collision with rabbit
+game - clear zombies and bullet if hit
+game - check player collision with zombie
 
 Links -------------------------------------------------<
-Trello: https://trello.com/b/ejUHRtiM/ruthless-game
+
 GitRepositry: https://github.com/vinayakdandin1/RuthlessGame
 
 Git --------------------------------------------------<

@@ -52,6 +52,7 @@ let gearY = y + 10;
 
 let gearIncrement = 20;
 let showBullet = false;
+
 // Creating Images
 
 let charecter = document.createElement('img')
@@ -127,6 +128,8 @@ let levelId = 1
 
 // }
 
+//Function for pits
+
 function whiteSpace() {
     ctx.drawImage(emptySpace, 0, 0,emptySpace.width, emptySpace.height, emptyX, emptyY, 30, 32)
     emptyX -= emptyDecrement
@@ -144,6 +147,8 @@ function whiteSpace() {
         }
     }
 }
+
+//Functions for Goodies
 
 function updateFruit() {
     fruitsID = setInterval(() => {
@@ -183,7 +188,9 @@ function drawFruits() {
 
     }   
 }
-  
+
+// Functions for bullet
+
 function drawGear() {
     
     if (showBullet) {
@@ -210,6 +217,8 @@ function shootGear() {
         showBullet = true       
     });
 }
+
+//Functions for player and zombies
 
 function updateFrame(){
     curFrame++
@@ -323,6 +332,8 @@ function newCloud1() {
     }
 }
 
+// All other functions for game functionality
+
 function gameOver() {
 
     clearInterval(intervalID)
@@ -352,8 +363,6 @@ function main(){
     ctx.font = '12px Verdana'
     ctx.fillText('Level: ' + level, canvas.width - 80, canvas.height - 10)
 } 
-
-//Interval for game progress
 
 function startGame() {
     
@@ -397,6 +406,8 @@ function startGame() {
     }, 10000);
     
 }
+
+// Event listeners to start game, shoot bullet and jump functionality
 
 window.addEventListener('load', () => {
     canvas.style.display = 'none'
